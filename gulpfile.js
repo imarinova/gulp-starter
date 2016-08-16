@@ -1,0 +1,75 @@
+// ////////////////////////////////////////////////////////
+// Required
+// ///////////////////////////////////////////////////////
+
+var gulp =  require('gulp'),
+	uglify = require('gulp-uglify')
+	rename = require('gulp-rename'),
+	less = require('gulp-less'),
+	plumber = require('gulp-plumber'),
+	browserSync = require('browser-sync'),
+	reload = browserSync.reload;
+
+
+// ////////////////////////////////////////////////////////
+// Scripts Takss
+// ///////////////////////////////////////////////////////
+
+gulp.task('scripts', function() {
+	gulp.src(['app/js/**/*.js', '!app/js/**/*.min.js'])
+	.pipe(rename({
+      suffix:'.min'
+    }))
+	.pipe(uglify())
+	.pipe(plumber())
+    .pipe(gulp.dest('app/js'))
+    .pipe(reload({
+			stream: true
+		}));
+});
+
+// ////////////////////////////////////////////////////////
+// Less Takss
+// ///////////////////////////////////////////////////////
+gulp.task('less', function(){
+	gulp.src('app/less/**/*.less')
+		.pipe(plumber())
+		.pipe(less())
+		.pipe(gulp.dest('app/css'))
+		.pipe(reload({
+			stream: true
+		}));
+});
+
+// ////////////////////////////////////////////////////////
+// HTML Takss
+// ///////////////////////////////////////////////////////
+gulp.task('html', function(){
+	gulp.src('app/**/*.html');
+});
+
+// ////////////////////////////////////////////////////////
+// BrowserSync Takss
+// ///////////////////////////////////////////////////////
+gulp.task('browser-sync', function(){
+	browserSync({
+		server: {
+			baseDir: "./app/"
+		}
+	})
+});
+
+
+// ////////////////////////////////////////////////////////
+// Watch Takss
+// ///////////////////////////////////////////////////////
+gulp.task('watch', function(){
+	gulp.watch('app/js/**/*.js', ['scripts']);
+	gulp.watch('app/less/**/*.less', ['less'])
+	gulp.watch('app/**/*.html', ['html'])
+});
+
+// ////////////////////////////////////////////////////////
+// Default Takss
+// ///////////////////////////////////////////////////////
+gulp.task('default', ['scripts', 'less', 'html', 'browser-sync', 'watch']);
